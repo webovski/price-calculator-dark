@@ -1,0 +1,42 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f9f9f9;
+}
+h1, h2 {
+    text-align: center;
+}
+.slider-container {
+    width: 80%;
+    margin: 20px auto;
+}
+.slider-container input[type="range"] {
+    width: 100%;
+}
+.output {
+    text-align: center;
+    margin: 10px 0;
+    font-size: 1.2em;
+}
+.chat-list {
+    margin: 20px auto;
+    width: 80%;
+    padding: 10px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.chat-item {
+    margin: 5px 0;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+.chat-item:last-child {
+    border-bottom: none;
+}
+.tip {
+    text-align: center;
+    font-size: 0.9em;
+    color: #888;
+    margin-top: 5px;
+}
