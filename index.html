@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ad Posting Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .slider-container {
+            width: 80%;
+            margin: 20px auto;
+        }
+        .slider-container input[type="range"] {
+            width: 100%;
+        }
+        .output {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+        .chat-list {
+            margin: 20px auto;
+            width: 80%;
+            padding: 10px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .chat-item {
+            margin: 5px 0;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .chat-item:last-child {
+            border-bottom: none;
+        }
+        .tip {
+            text-align: center;
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>Конфигуратор</h1>
+<h2>Подстройте рекламу под Ваш бюджет</h2>
+
+<div class="slider-container">
+    <label for="chat-range">Выберите охват:</label>
+    <input type="range" id="chat-range" min="1" value="1" step="1">
+    <div class="output">Selected Chats: <span id="selected-chats">1</span></div>
+    <div class="output">Total Audience: <span id="audience-count">0</span> пользователей</div>
+    <div class="output">Total Price: $<span id="total-price">0.00</span></div>
+    <div class="tip" id="discount-tip">Скидка: 0%</div>
+</div>
+
+<div class="chat-list" id="chat-list">
+    <!-- Chat items will be dynamically added here -->
+</div>
+
+<script>
+    // Discount tiers
+    const discountTiers = [
+        { maxUsers: 100000, rate: 0.0016 },
+        { maxUsers: 250000, rate: 0.0013 },
+        { maxUsers: 500000, rate: 0.001 },
+        { maxUsers: 750000, rate: 0.0007 },
+        { maxUsers: 1000000, rate: 0.0005 },
+        { maxUsers: 1500000, rate: 0.00035 },
+    ];
+
+    // Chat data (all 100 chats from your list)
+    const chats = [
+        { username: "uslugi_tailera", members: 64922 },
+        { username: "dokov_prav", members: 52866 },
+        { username: "go_workers", members: 50738 },
+        { username: "m5crd", members: 47824 },
+        { username: "rollycrd", members: 47749 },
+        { username: "koderast", members: 46798 },
+        { username: "wrk_002", members: 46437 },
+        { username: "podrabotka_prodam", members: 45356 },
+        { username: "rabota_uslugi_vakansii", members: 41026 },
+        { username: "crd_777", members: 40388 },
+        { username: "drk_uslugi", members: 39942 },
+        { username: "durov_lab", members: 39936 },
+        { username: "cpazavod", members: 39761 },
+        { username: "xss_chat", members: 39594 },
+        { username: "zelenkauslugi", members: 39331 },
+        { username: "proverenyi", members: 38467 },
+        { username: "dolynska_chat", members: 38430 },
+        { username: "xss_is_chat", members: 37963 },
+        { username: "sato_club", members: 37459 },
+        { username: "dea9lock", members: 36212 },
+        { username: "destchat", members: 35912 },
+        { username: "lebovski_pub", members: 35517 },
+        { username: "exdchat", members: 34897 },
+        { username: "dynastiyachat", members: 34836 },
+        { username: "chatuslugj", members: 33776 },
+        { username: "wrk_077", members: 31874 },
+        { username: "znakomstva_chatika", members: 31718 },
+        { username: "one_619", members: 31186 },
+        { username: "wts_777", members: 30320 },
+        { username: "crder", members: 27563 },
+        { username: "bsschatuslug", members: 26613 },
+        { username: "wwhpr", members: 26525 },
+        { username: "lutacash", members: 26369 },
+        { username: "all_scams", members: 25411 },
+        { username: "piarnyi_chatik", members: 21970 },
+        { username: "zarabotok_tor", members: 12839 },
+        { username: "eval41", members: 11401 },
+        { username: "odin_takoii", members: 10717 },
+        { username: "glovarskiy", members: 10454 },
+        { username: "uslugi_weba", members: 10222 },
+        { username: "crd_uslugi", members: 9758 },
+        { username: "kafedra_crd", members: 9119 },
+        { username: "darkpricer", members: 9001 },
+        { username: "rbt_777", members: 7972 },
+        { username: "bytes_hub", members: 7629 },
+        { username: "pomogatorfrilans", members: 7379 },
+        { username: "cyberkent", members: 6767 },
+        { username: "in_drks", members: 5076 },
+        { username: "sviatoj_uslugi", members: 4841 },
+        { username: "sukin_ded", members: 4458 },
+        { username: "onionproj", members: 3933 },
+        { username: "wrkod", members: 3454 },
+        { username: "uslgc", members: 3288 },
+        { username: "o0nbs", members: 3082 },
+        { username: "btvns", members: 2821 },
+        { username: "xak_place", members: 2673 },
+        { username: "dengi_btc", members: 2667 },
+        { username: "arbuznich", members: 2387 },
+        { username: "inte_gral", members: 2063 },
+        { username: "btc_mom", members: 1950 },
+        { username: "temki_tiomki", members: 1873 },
+        { username: "workajem", members: 1867 },
+        { username: "bablishko_chat", members: 1841 },
+        { username: "day0zero", members: 1692 },
+        { username: "kriptodik", members: 1666 },
+        { username: "obli4itel", members: 1613 },
+        { username: "fud_cryptors", members: 1611 },
+        { username: "zarabotka_chat", members: 1586 },
+        { username: "ransom_group", members: 1568 },
+        { username: "lztk69", members: 1557 },
+        { username: "lolzuslug", members: 1549 },
+        { username: "pavlovichcrd", members: 1497 },
+        { username: "uslugi_cvv", members: 1447 },
+        { username: "nn_sledovatel", members: 1446 },
+        { username: "adept_btc", members: 1428 },
+        { username: "ludipro_pavlovich1", members: 1413 },
+        { username: "rabotniki_zdes", members: 1342 },
+        { username: "tanzania_zanzibar_chat", members: 1308 },
+        { username: "podrabotkafreddy", members: 1289 },
+        { username: "sunlight_c", members: 1277 },
+        { username: "casher_zarobotok", members: 1275 },
+        { username: "cryptotrafficc", members: 1170 },
+        { username: "ishiurabotu_vakansii", members: 1166 },
+        { username: "malware_talk", members: 1164 },
+        { username: "satoshi_temki", members: 1036 },
+        { username: "crd_rabota", members: 1031 },
+        { username: "lolziks", members: 1027 },
+        { username: "ludipro_pavlovich_chat", members: 1014 },
+        { username: "bunker_uslugi", members: 995 },
+        { username: "wwh_cental", members: 933 },
+        { username: "rabotamerl", members: 908 },
+        { username: "fw_chat", members: 900 },
+        { username: "rabota_onlinea", members: 894 },
+        { username: "shemy_rabota", members: 881 },
+        { username: "lolzteamb", members: 796 },
+        { username: "traffers_club", members: 583 },
+        { username: "cpunk_forum", members: 569 },
+        { username: "frelanceplace", members: 566 },
+        { username: "kotoslugi", members: 531 },
+        { username: "programmistyb", members: 514 },
+        { username: "loranrabota", members: 493 },
+        { username: "freelanceguid", members: 443 },
+        { username: "cardshouse_ru", members: 427 },
+        { username: "expa_forum", members: 345 },
+        { username: "bro_uslugi", members: 345 },
+        { username: "kardingproof", members: 328 },
+        { username: "karding_obuchenie_chat", members: 319 },
+        { username: "kardinggangs", members: 250 },
+        { username: "kardingru", members: 219 },
+        { username: "cardolder", members: 147 }
+    ];
+
+    // Sort chats by number of members descending (optional)
+    chats.sort((a, b) => b.members - a.members);
+
+    // Select DOM elements
+    const chatRange = document.getElementById('chat-range');
+    const selectedChats = document.getElementById('selected-chats');
+    const audienceCount = document.getElementById('audience-count');
+    const totalPrice = document.getElementById('total-price');
+    const discountTip = document.getElementById('discount-tip');
+    const chatList = document.getElementById('chat-list');
+
+    // Set max range to the total number of chats
+    chatRange.max = chats.length;
+
+    // Calculate cost per user based on discount tiers
+    function calculateCost(users) {
+        let totalCost = 0;
+        let remainingUsers = users;
+
+        for (const tier of discountTiers) {
+            if (remainingUsers <= 0) break;
+
+            const tierUsers = Math.min(remainingUsers, tier.maxUsers);
+            totalCost += tierUsers * tier.rate;
+            remainingUsers -= tierUsers;
+        }
+
+        return totalCost;
+    }
+
+    // Get discount percentage based on current cost per user
+    function getDiscountPercentage(totalCost, users) {
+        const baseCost = users * discountTiers[0].rate; // Without discount
+        return Math.round((1 - totalCost / baseCost) * 100);
+    }
+
+    // Update chats and stats dynamically
+    function updateStats() {
+        const chatCount = parseInt(chatRange.value, 10);
+        const selectedChatsList = chats.slice(0, chatCount);
+
+        const totalUsers = selectedChatsList.reduce((sum, chat) => sum + chat.members, 0);
+        const totalCost = calculateCost(totalUsers);
+
+        // Update UI
+        selectedChats.textContent = chatCount;
+        audienceCount.textContent = totalUsers.toLocaleString();
+        totalPrice.textContent = totalCost.toFixed(2);
+        discountTip.textContent = `Ваша скидка: ${getDiscountPercentage(totalCost, totalUsers)}%`;
+
+        // Update chat list
+        chatList.innerHTML = selectedChatsList.map(chat => `
+                <div class="chat-item">
+                    ${chat.username}: ${chat.members.toLocaleString()} участников
+                </div>
+            `).join('');
+    }
+
+    // Attach event listener
+    chatRange.addEventListener('input', updateStats);
+
+    // Initial call
+    updateStats();
+</script>
+</body>
+</html>
