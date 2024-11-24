@@ -52,3 +52,6 @@ h1, h2 {
     cursor: pointer;
     margin-left: 10px;
 }
+#title {
+    margin-top: 10%;
+}
