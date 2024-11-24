@@ -55,3 +55,26 @@ h1, h2 {
 #title {
     margin-top: 10%;
 }
+
+.chat-item > a {
+    text-decoration: none;
+    color: #3172b8;
+}
+
+.chat-item > a:hover {
+    color: #0080ff;
+}
+
+#discount-tip {
+    color: darkgreen;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+#audience-count, #total-price, #selected-chats {
+    font-weight: bold;
+}
+
+#label-range {
+    font-size: 18px;
+}
