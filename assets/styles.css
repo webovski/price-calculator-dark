@@ -77,3 +77,27 @@ h1, h2 {
 #label-range {
     font-size: 18px;
 }
+.slider-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#duration-range {
+    width: 100%;
+    margin-top: 10px;
+}
+
+#output-duration {
+    text-align: center;
+    margin: 10px 0;
+    font-size: 1.2em;
+}
+#label-duration {
+    margin-top: 1.5rem;
+}
+
+#selected-duration {
+    font-weight: bold;
+}

@@ -19,7 +19,11 @@
 <div class="slider-container">
     <label for="chat-range" id="label-range">Выберите охват:</label>
     <input type="range" id="chat-range" min="1" value="1" step="1">
-
+    <label for="duration-range" id="label-duration">Выберите длительность (дней):</label>
+    <input type="range" id="duration-range" min="1" max="365" value="1" step="1">
+    <div class="output" id="output-duration">
+        <span id="label-duration-days">🕒 Длительность: </span><span id="selected-duration">1</span>
+    </div>
     <!-- Separate spans for output-chats and output-price -->
     <div class="output" id="output-chats">
         <span id="label-chats">💬 Число чатов: </span><span id="selected-chats">1</span>
@@ -34,6 +38,7 @@
         <span id="label-discount">🔥 Скидка: </span><span id="discount-value">0%</span>
     </div>
 </div>
+
 
 <div class="chat-list" id="chat-list">
     <!-- Chat items will be dynamically added here -->
@@ -51,6 +56,9 @@
             outputPrice: "Стоимость: $",
             discountTip: "🔥 Скидка: ",
             participants: "человек",
+            labelDuration: "Выберите длительность (дней):",
+            outputDuration: "🕒 Длительность: ",
+            durationDays: ["день", "дня", "дней"], // Singular, few, many
         },
         en: {
             title: "⚙️ Configurator",
@@ -61,6 +69,9 @@
             outputPrice: "Cost: $",
             discountTip: "🔥 Discount: ",
             participants: "people",
+            labelDuration: "Select duration (days):",
+            outputDuration: "🕒 Duration: ",
+            durationDays: ["day", "days", "days"], // Singular, plural (English doesn't need the "few" case)
         },
         ua: {
             title: "⚙️ Конфігуратор",
@@ -71,10 +82,24 @@
             outputPrice: "Вартість: $",
             discountTip: "🔥 Знижка: ",
             participants: "користувачів",
+            labelDuration: "Виберіть тривалість (днів):",
+            outputDuration: "🕒 Тривалість: ",
+            durationDays: ["день", "дні", "днів"], // Singular, few, many
         }
     };
 
     let currentLang = 'ru';  // Default language is Russian (ru)
+
+    const durationDiscountTiers = [
+        { maxDays: 7, extraDiscount: 0.01 },   // 1% extra discount for 1-7 days (previously 2%)
+        { maxDays: 14, extraDiscount: 0.025 },  // 2.5% extra discount for 8-14 days (previously 5%)
+        { maxDays: 21, extraDiscount: 0.04 },   // 4% extra discount for 15-21 days (previously 8%)
+        { maxDays: 30, extraDiscount: 0.06 },   // 6% extra discount for 22-30 days (previously 12%)
+        { maxDays: 60, extraDiscount: 0.09 },   // 9% extra discount for 31-60 days (previously 18%)
+        { maxDays: 90, extraDiscount: 0.125 },  // 12.5% extra discount for 61-90 days (previously 25%)
+        { maxDays: 180, extraDiscount: 0.175 }, // 17.5% extra discount for 91-180 days (previously 35%)
+        { maxDays: 365, extraDiscount: 0.25 },  // 25% extra discount for 181-365 days (previously 50%)
+    ];
 
     const discountTiers = [
         { maxUsers: 100000, rate: 0.0016 },
@@ -82,7 +107,7 @@
         { maxUsers: 500000, rate: 0.001 },
         { maxUsers: 750000, rate: 0.0007 },
         { maxUsers: 1000000, rate: 0.0005 },
-        { maxUsers: 1500000, rate: 0.00035 },
+        { maxUsers: 1500000, rate: 0.00035 }
     ];
 
     let chats = []; // Variable to hold chat data
@@ -150,37 +175,77 @@
         return Math.round((1 - totalCost / baseCost) * 100);
     }
 
-    // Update chats and stats dynamically
+    // Select the duration slider and display elements
+    const durationRange = document.getElementById('duration-range');
+    const selectedDuration = document.getElementById('selected-duration');
+
+    // Calculate the duration discount based on the selected days
+    function calculateDurationDiscount(days) {
+        let extraDiscount = 0;
+
+        for (const tier of durationDiscountTiers) {
+            if (days <= tier.maxDays) {
+                extraDiscount = tier.extraDiscount;
+                break;
+            }
+        }
+
+        return extraDiscount;
+    }
+
+    // Updated updateStats Function
     function updateStats() {
         const chatCount = parseInt(chatRange.value, 10) || 1;
+        const durationDays = parseInt(durationRange.value, 10) || 1;
         const selectedChatsList = chats.slice(0, chatCount);
 
         const totalUsers = selectedChatsList.reduce((sum, chat) => sum + chat.members, 0);
-        const totalCost = calculateCost(totalUsers);
+        const baseCost = calculateCost(totalUsers);
 
-        // Update UI after recalculating values
+        // Calculate total discounts
+        const chatDiscount = getDiscountPercentage(baseCost, totalUsers); // Discount from chat tiers
+        const durationDiscount = calculateDurationDiscount(durationDays); // Additional discount from duration
+
+        const totalDiscount = chatDiscount + Math.round(durationDiscount * 100); // Combine discounts
+        const finalCost = baseCost * (1 - durationDiscount); // Apply duration discount
+
+        // Get correct word for duration
+        const durationWord = getDurationWord(durationDays, currentLang);
+
+        // Update UI
         selectedChats.textContent = chatCount;
         audienceCount.textContent = `${totalUsers.toLocaleString()} ${langData[currentLang].participants}`;
-        totalPrice.textContent = totalCost.toFixed(2);
-        discountTip.textContent = `${langData[currentLang].discountTip} ${getDiscountPercentage(totalCost, totalUsers)}%`;
+        totalPrice.textContent = finalCost.toFixed(2);
+        discountTip.textContent = `${langData[currentLang].discountTip} ${totalDiscount}%`;
+        selectedDuration.textContent = `${durationDays} ${durationWord}`;
 
         // Update chat list dynamically
         chatList.innerHTML = selectedChatsList.map(chat => `
-                <div class="chat-item">
-                    <a href='https://t.me/${chat.username}' target="_blank">@${chat.username}: ${chat.members.toLocaleString()} ${langData[currentLang].participants}</a>
-                </div>
-            `).join('');
+            <div class="chat-item">
+                <a href='https://t.me/${chat.username}' target="_blank">@${chat.username}: ${chat.members.toLocaleString()} ${langData[currentLang].participants}</a>
+            </div>
+        `).join('');
     }
+
+    // Attach event listener to the duration slider
+    durationRange.addEventListener('input', updateStats);
+
+    // Attach the chat range slider listener
+    chatRange.addEventListener('input', updateStats);
+
+    // Update stats on load
+    updateStats();
 
     // Attach event listener to slider input
     chatRange.addEventListener('input', updateStats);
 
     // Language change handler
+    // Updated changeLanguage Function
     function changeLanguage(lang) {
         if (langData[lang]) {
             currentLang = lang;
 
-            // Update all text based on selected language
+            // Update static text
             title.textContent = langData[currentLang].title;
             subtitle.textContent = langData[currentLang].subtitle;
             labelRange.textContent = langData[currentLang].labelRange;
@@ -188,12 +253,26 @@
             labelUsers.textContent = langData[currentLang].outputUsers;
             labelPrice.textContent = langData[currentLang].outputPrice;
             labelDiscount.textContent = langData[currentLang].discountTip;
+            document.getElementById('label-duration').textContent = langData[currentLang].labelDuration;
+            document.getElementById('label-duration-days').textContent = langData[currentLang].outputDuration;
 
-            // Re-render the statistics based on current slider value, keeping the user's choice
+            // Re-render dynamic elements
             updateStats();
         }
     }
+    function getDurationWord(days, lang) {
+        const words = langData[lang].durationDays;
 
+        if (lang === "ru" || lang === "ua") {
+            if (days % 10 === 1 && days % 100 !== 11) return words[0]; // Singular: 1, 21, 31...
+            if ([2, 3, 4].includes(days % 10) && ![12, 13, 14].includes(days % 100)) return words[1]; // Few: 2-4, 22-24...
+            return words[2]; // Many: 5-20, 25-30, etc.
+        } else if (lang === "en") {
+            return days === 1 ? words[0] : words[1]; // Singular for 1, plural otherwise
+        }
+
+        return words[2]; // Default to "many" case
+    }
 </script>
 </body>
 </html>
