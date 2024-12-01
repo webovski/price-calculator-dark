@@ -8,10 +8,15 @@
 </head>
 <body>
 <!-- Language Switcher (Flag icons) -->
-<div class="lang-switcher">
-    <img src="https://flagcdn.com/w20/ru.png" srcset="https://flagcdn.com/w40/ru.png 2x" id="lang-ru" onclick="changeLanguage('ru')" width="20" alt="Russia">
-    <img src="https://flagcdn.com/w20/us.png" srcset="https://flagcdn.com/w40/us.png 2x" id="lang-en" onclick="changeLanguage('en')" width="20" alt="English">
-    <img src="https://flagcdn.com/w20/ua.png" srcset="https://flagcdn.com/w40/ua.png 2x" id="lang-ua" onclick="changeLanguage('ua')" width="20" alt="Ukraine">
+<div class="navigation">
+    <div class="logo">
+        <a href="/">Pricer.cc</a>
+    </div>
+    <div class="lang-container">
+        <img src="https://flagcdn.com/w20/ru.png" srcset="https://flagcdn.com/w40/ru.png 2x" id="lang-ru" onclick="changeLanguage('ru')" width="20" alt="Russia">
+        <img src="https://flagcdn.com/w20/us.png" srcset="https://flagcdn.com/w40/us.png 2x" id="lang-en" onclick="changeLanguage('en')" width="20" alt="English">
+        <img src="https://flagcdn.com/w20/ua.png" srcset="https://flagcdn.com/w40/ua.png 2x" id="lang-ua" onclick="changeLanguage('ua')" width="20" alt="Ukraine">
+    </div>
 </div>
 <h1 id="title">⚙️ Конфигуратор</h1>
 <h2 id="subtitle">💵 Настройте рекламу под Ваш бюджет</h2>
@@ -32,7 +37,7 @@
         <span id="label-users">Вашу рекламу увидит </span><span id="audience-count">0</span> 🙄
     </div>
     <div class="output" id="output-price">
-        <span id="label-price">Стоимость: $</span><span id="total-price">0.00</span>
+        <span id="label-price">Стоимость: </span><span id="total-price">0.00</span><span style="color: #5aec8c">$</span>
     </div>
     <div class="tip" id="discount-tip">
         <span id="label-discount">🔥 Скидка: </span><span id="discount-value">0%</span>
@@ -53,7 +58,7 @@
             labelRange: "Выберите охват:",
             outputChats: "💬 Число чатов: ",
             outputUsers: "Вашу рекламу увидит ",
-            outputPrice: "Стоимость: $",
+            outputPrice: "Стоимость: ",
             discountTip: "🔥 Скидка: ",
             participants: "человек",
             labelDuration: "Выберите длительность (дней):",
@@ -66,7 +71,7 @@
             labelRange: "Select reach:",
             outputChats: "💬 Number of chats: ",
             outputUsers: "Your ad will be seen by ",
-            outputPrice: "Cost: $",
+            outputPrice: "Cost: ",
             discountTip: "🔥 Discount: ",
             participants: "people",
             labelDuration: "Select duration (days):",
@@ -79,7 +84,7 @@
             labelRange: "Виберіть охоплення:",
             outputChats: "💬 Кількість чатів: ",
             outputUsers: "Вашу рекламу побачать ",
-            outputPrice: "Вартість: $",
+            outputPrice: "Вартість: ",
             discountTip: "🔥 Знижка: ",
             participants: "користувачів",
             labelDuration: "Виберіть тривалість (днів):",
