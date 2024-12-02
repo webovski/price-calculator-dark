@@ -241,3 +241,11 @@ input[type="range"]::-ms-thumb {
     font-weight: bold;
 }
 
+@media (max-width: 600px) {
+    .floating-button {
+        width: 85%;
+        animation: none;
+    }
+
+}
+
