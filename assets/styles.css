@@ -178,3 +178,66 @@ input[type="range"]::-ms-thumb {
     background: #202832;
     padding: 10px;
 }
+/* Стили для кнопки, которая парит в правом нижнем углу */
+.floating-button {
+    position: fixed;
+    text-decoration: none;
+    color: #fff;
+    bottom: 20px; /* Отступ от нижнего края */
+    right: 20px;  /* Отступ от правого края */
+    background-color: #248bda; /* Цвет фона */
+    border-radius: 15px; /* Округлая форма */
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Тень для эффекта "парения" */
+    transition: transform 0.3s ease; /* Плавный переход для анимации */
+    z-index: 1000; /* Убедимся, что кнопка будет поверх всего */
+}
+
+.floating-button:hover {
+    transform: scale(1.1); /* Увеличение кнопки при наведении */
+}
+#telegram-text {
+    text-transform: uppercase;
+}
+/* Анимация для кнопки с паузой */
+@keyframes buttonHoverEffect {
+    0% {
+        transform: scale(1); /* Нормальный размер */
+    }
+    25% {
+        transform: scale(1.2); /* Увеличиваем на 20% */
+    }
+    50% {
+        transform: scale(1); /* Возвращаем к нормальному размеру */
+    }
+    75% {
+        transform: scale(1.2); /* Увеличиваем на 20% */
+    }
+    100% {
+        transform: scale(1); /* Возвращаем к нормальному размеру */
+    }
+}
+
+/* Стили для кнопки с анимацией */
+.floating-button {
+    animation: buttonHoverEffect 3s ease-in-out infinite; /* Повторяется каждые 3 секунды */
+}
+
+/* Стили для иконки кнопки */
+.floating-button img {
+    transition: transform 0.3s ease;
+}
+
+/* При наведении на кнопку увеличиваем иконку */
+.floating-button:hover img {
+    transform: scale(1.2); /* Увеличиваем иконку */
+}
+
+/* Стили для текста на кнопке */
+.floating-button span {
+    margin-left: 10px;
+    font-size: 14px;
+    color: white;
+    font-weight: bold;
+}
+

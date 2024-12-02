@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>⚙️ Конфигуратор</title>
     <link rel="stylesheet" type="text/css" href="./assets/styles.css">
+    <script src="https://kit.fontawesome.com/f8d97f667d.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <!-- Language Switcher (Flag icons) -->
@@ -64,6 +65,7 @@
             labelDuration: "Выберите длительность (дней):",
             outputDuration: "🕒 Длительность: ",
             durationDays: ["день", "дня", "дней"], // Singular, few, many
+            telegramButtonText: "Заказать рекламу" // Перевод для кнопки
         },
         en: {
             title: "⚙️ Configurator",
@@ -77,6 +79,7 @@
             labelDuration: "Select duration (days):",
             outputDuration: "🕒 Duration: ",
             durationDays: ["day", "days", "days"], // Singular, plural (English doesn't need the "few" case)
+            telegramButtonText: "Order ADS" // Перевод для кнопки
         },
         ua: {
             title: "⚙️ Конфігуратор",
@@ -90,6 +93,7 @@
             labelDuration: "Виберіть тривалість (днів):",
             outputDuration: "🕒 Тривалість: ",
             durationDays: ["день", "дні", "днів"], // Singular, few, many
+            telegramButtonText: "Замовити рекламу" // Перевод для кнопки
         }
     };
 
@@ -108,11 +112,11 @@
 
     const discountTiers = [
         { maxUsers: 100000, rate: 0.0016 },
-        { maxUsers: 250000, rate: 0.0013 },
-        { maxUsers: 500000, rate: 0.001 },
-        { maxUsers: 750000, rate: 0.0007 },
-        { maxUsers: 1000000, rate: 0.0005 },
-        { maxUsers: 1500000, rate: 0.00035 }
+        { maxUsers: 250000, rate: 0.00158 },
+        { maxUsers: 500000, rate: 0.00155 },
+        { maxUsers: 750000, rate: 0.00151 },
+        { maxUsers: 1000000, rate: 0.00149 },
+        { maxUsers: 1500000, rate: 0.0014 }
     ];
 
     let chats = []; // Variable to hold chat data
@@ -260,6 +264,7 @@
             labelDiscount.textContent = langData[currentLang].discountTip;
             document.getElementById('label-duration').textContent = langData[currentLang].labelDuration;
             document.getElementById('label-duration-days').textContent = langData[currentLang].outputDuration;
+            document.getElementById('telegram-text').textContent = langData[currentLang].telegramButtonText;
 
             // Re-render dynamic elements
             updateStats();
@@ -279,5 +284,10 @@
         return words[2]; // Default to "many" case
     }
 </script>
+<!-- Floating button for Telegram link -->
+<a href="https://t.me/Alexeevpr" target="_blank" class="floating-button">
+    <i class="fa-brands fa-telegram fa-xl"></i>
+    <span id="telegram-text">Заказать рекламу</span>
+</a>
 </body>
 </html>
